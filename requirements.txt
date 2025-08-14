@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+aiohttp
+python-dotenv
+pydantic
+crawl4ai
+jinja2

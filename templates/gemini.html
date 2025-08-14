@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Article Summarizer - Peringkas Artikel Cerdas</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            animation: {
+              "fade-in": "fadeIn 0.3s ease-out",
+              "slide-up": "slideUp 0.4s ease-out",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+              slideUp: {
+                "0%": { opacity: "0", transform: "translateY(20px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-gray-50 flex flex-col justify-between">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+      <div class="max-w-4xl mx-auto px-4 py-4">
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center"
+          >
+            <i class="fas fa-robot text-white text-sm"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-semibold text-gray-900">
+              AI Article Summarizer
+            </h1>
+            <p class="text-xs text-gray-500">Peringkas Artikel Otomatis</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main
+      class="max-w-4xl transition delay-150 duration-300 ease-in-out mx-auto px-4 py-8 flex-1 items-center justify-center self-center place-content-center"
+    >
+      <!-- Hero Section -->
+      <div class="text-center mb-8">
+        <div class="mb-4">
+          <div
+            class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-xl mb-4"
+          >
+            <i class="fas fa-brain text-2xl text-white"></i>
+          </div>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-3">
+          <span class="text-blue-600">AI</span> Article Summarize
+        </h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">
+          Change the way you read articles with our AI-powered summarizer. Just
+          provide the article URL and select a summary style, and let AI do the
+          rest.
+        </p>
+      </div>
+
+      <!-- Main Card -->
+      <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
+        <!-- Form Section -->
+        <form id="summaryForm" class="space-y-6">
+          <!-- URL Input -->
+          <div>
+            <label
+              for="urlInput"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-link text-blue-600 mr-1"></i>
+              URL Artikel
+            </label>
+            <input
+              type="url"
+              id="urlInput"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              placeholder="https://example.com/artikel-untuk-dianalisis"
+              required
+            />
+            <p class="text-sm text-gray-500 mt-1">
+              Masukkan URL lengkap artikel yang ingin dianalisis
+            </p>
+          </div>
+
+          <!-- Style Selection -->
+          <div>
+            <label
+              for="styleSelect"
+              class="block text-sm font-medium text-gray-700 mb-2"
+            >
+              <i class="fas fa-palette text-blue-600 mr-1"></i>
+              Gaya Ringkasan
+            </label>
+            <select
+              id="styleSelect"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-colors"
+              required
+            >
+              <option value="">Pilih gaya ringkasan...</option>
+              <option value="formal">Formal</option>
+              <option value="casual">Kasual</option>
+              <option value="professional">Profesional</option>
+              <option value="journalistic">Jurnalistik</option>
+              <option value="educational">Edukatif</option>
+              <option value="simple">Sederhana</option>
+            </select>
+            <p class="text-sm text-gray-500 mt-1">
+              Pilih gaya bahasa yang sesuai dengan kebutuhan Anda
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            id="submitBtn"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+          >
+            <i class="fas fa-magic"></i>
+            <span>Buat Ringkasan</span>
+          </button>
+        </form>
+
+        <!-- Loading State -->
+        <div id="loadingDiv" class="hidden text-center py-12 animate-fade-in">
+          <div
+            class="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4"
+          >
+            <i class="fas fa-cog text-xl text-white animate-spin"></i>
+          </div>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">
+            Menganalisis Artikel
+          </h3>
+          <p class="text-gray-600">
+            AI sedang memproses konten dan mengekstrak informasi penting...
+          </p>
+          <div class="mt-4 max-w-xs mx-auto bg-gray-200 rounded-full h-1">
+            <div
+              class="bg-blue-600 h-1 rounded-full animate-pulse"
+              style="width: 70%"
+            ></div>
+          </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultContainer" class="hidden mt-8 animate-slide-up">
+          <!-- Success Badge -->
+          <div class="text-center mb-6">
+            <div
+              class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-lg text-sm font-medium"
+            >
+              <i class="fas fa-check-circle mr-2"></i>
+              Analisis Selesai
+            </div>
+          </div>
+
+          <!-- Results Grid -->
+          <div class="space-y-6">
+            <!-- Title -->
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex items-start space-x-3">
+                <div
+                  class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"
+                >
+                  <i class="fas fa-heading text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-sm font-medium text-gray-700 mb-1">
+                    Judul Artikel
+                  </h3>
+                  <p id="judulContent" class="text-gray-900 font-medium"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Meta Information -->
+            <div class="grid md:grid-cols-2 gap-4">
+              <!-- Date -->
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-start space-x-3">
+                  <div
+                    class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"
+                  >
+                    <i class="fas fa-calendar-alt text-white text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">
+                      Tanggal Publikasi
+                    </h3>
+                    <p
+                      id="tanggalContent"
+                      class="text-gray-900 font-medium"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Author -->
+              <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-start space-x-3">
+                  <div
+                    class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"
+                  >
+                    <i class="fas fa-user-edit text-white text-sm"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-sm font-medium text-gray-700 mb-1">
+                      Penulis
+                    </h3>
+                    <p
+                      id="penulisContent"
+                      class="text-gray-900 font-medium"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Style Badge -->
+            <div class="bg-blue-50 rounded-lg p-4">
+              <div class="flex items-center space-x-3">
+                <div
+                  class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0"
+                >
+                  <i class="fas fa-palette text-white text-sm"></i>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-sm font-medium text-gray-700 mb-1">
+                    Gaya Ringkasan
+                  </h3>
+                  <p id="styleContent" class="text-blue-900 font-medium"></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="bg-blue-50 rounded-lg p-6">
+              <div class="flex items-start space-x-3">
+                <div
+                  class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"
+                >
+                  <i class="fas fa-file-alt text-white"></i>
+                </div>
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                    Ringkasan
+                  </h3>
+                  <div
+                    id="ringkasanContent"
+                    class="text-gray-800 leading-relaxed space-y-2"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="mt-6 text-center">
+            <button
+              onclick="resetForm()"
+              class="inline-flex items-center px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors space-x-2"
+            >
+              <i class="fas fa-redo"></i>
+              <span>Analisis Artikel Lain</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Section -->
+        <div id="errorContainer" class="hidden mt-8 animate-slide-up">
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-start space-x-3">
+              <div
+                class="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-1"
+              >
+                <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-red-900 mb-2">
+                  Terjadi Kesalahan
+                </h3>
+                <p id="errorMessage" class="text-red-800"></p>
+                <button
+                  onclick="resetForm()"
+                  class="mt-4 inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors space-x-2"
+                >
+                  <i class="fas fa-redo"></i>
+                  <span>Coba Lagi</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- <footer class="mt-16 bg-white border-t border-gray-200">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <div class="text-center text-gray-500 text-sm">
+                <p>&copy; 2025 AI Article Summarizer. Peringkas artikel otomatis dengan teknologi AI.</p>
+            </div>
+        </div>
+    </footer> -->
+
+    <!-- Footer -->
+
+    <script>
+      const styleLabels = {
+        formal: "Formal",
+        casual: "Kasual",
+        professional: "Profesional",
+        journalistic: "Jurnalistik",
+        educational: "Edukatif",
+        simple: "Sederhana",
+      };
+
+      document
+        .getElementById("summaryForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const url = document.getElementById("urlInput").value;
+          const style = document.getElementById("styleSelect").value;
+          const submitBtn = document.getElementById("submitBtn");
+          const loadingDiv = document.getElementById("loadingDiv");
+          const resultContainer = document.getElementById("resultContainer");
+          const errorContainer = document.getElementById("errorContainer");
+
+          // Reset states
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<i class="fas fa-spinner animate-spin mr-2"></i><span>Memproses...</span>';
+          loadingDiv.classList.remove("hidden");
+          resultContainer.classList.add("hidden");
+          errorContainer.classList.add("hidden");
+
+          try {
+            const formData = new FormData();
+            formData.append("url", url);
+            formData.append("style", style);
+
+            const response = await fetch("/summarize", {
+              method: "POST",
+              body: formData,
+            });
+
+            const result = await response.json();
+
+            loadingDiv.classList.add("hidden");
+
+            if (result.success) {
+              document.getElementById("judulContent").textContent =
+                result.data.judul;
+              document.getElementById("tanggalContent").textContent =
+                result.data.tanggal;
+              document.getElementById("penulisContent").textContent =
+                result.data.penulis;
+              document.getElementById("styleContent").textContent =
+                styleLabels[style] || style;
+
+              // Format summary with proper paragraphs
+              const ringkasan = result.data.ringkasan;
+              const sentences = ringkasan.split(". ");
+              const formattedSummary = sentences
+                .map((sentence) =>
+                  sentence.trim()
+                    ? `<p class="mb-2">${sentence.trim()}${
+                        sentence.endsWith(".") ? "" : "."
+                      }</p>`
+                    : ""
+                )
+                .join("");
+
+              document.getElementById("ringkasanContent").innerHTML =
+                formattedSummary;
+              resultContainer.classList.remove("hidden");
+            } else {
+              document.getElementById("errorMessage").textContent =
+                result.error;
+              errorContainer.classList.remove("hidden");
+            }
+          } catch (error) {
+            loadingDiv.classList.add("hidden");
+            document.getElementById("errorMessage").textContent =
+              "Terjadi kesalahan jaringan. Periksa koneksi internet dan coba lagi.";
+            errorContainer.classList.remove("hidden");
+          }
+
+          submitBtn.disabled = false;
+          submitBtn.innerHTML =
+            '<i class="fas fa-magic mr-2"></i><span>Buat Ringkasan</span>';
+        });
+
+      function resetForm() {
+        document.getElementById("urlInput").value = "";
+        document.getElementById("styleSelect").value = "";
+        document.getElementById("resultContainer").classList.add("hidden");
+        document.getElementById("errorContainer").classList.add("hidden");
+        document.getElementById("loadingDiv").classList.add("hidden");
+      }
+    </script>
+  </body>
+</html>
