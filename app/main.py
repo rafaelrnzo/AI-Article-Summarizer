@@ -147,7 +147,7 @@ async def summarize_with_gemini(text: str, style: str = "casual") -> ArticleSumm
     return ArticleSummary(**parsed_json)
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory="app/templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):

@@ -10,17 +10,14 @@ import httpx
 from crawl4ai import AsyncWebCrawler
 import nest_asyncio
 
-# Setup event loop untuk Windows
 if sys.platform.startswith("win"):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 nest_asyncio.apply()
 
-# Ollama config
 OLLAMA_HOST = "http://192.168.100.3:11434"
 OLLAMA_MODEL = "llama3.2:latest"
 
-# Template setup
 templates = Jinja2Templates(directory="templates")
 
 class ArticleSummary(BaseModel):
@@ -30,7 +27,6 @@ class ArticleSummary(BaseModel):
     ringkasan: str
 
 async def crawl_url(url: str) -> str:
-    """Ambil isi artikel dari URL menggunakan crawler atau fallback HTTP GET."""
     try:
         async with AsyncWebCrawler(headless=True, verbose=False) as crawler:
             result = await crawler.arun(url=url, word_count_threshold=1)
@@ -44,7 +40,6 @@ async def summarize_with_ollama(text: str) -> ArticleSummary:
     if len(text) > 10000:
         text = text[:10000]
 
-    # Step 1: Ambil ringkasan mentah
     summary_prompt = f"""
     Buat ringkasan 5 kalimat yang jelas, padat, dan mudah dipahami dari artikel berikut.
     Sertakan poin-poin penting yang dibahas.
@@ -65,7 +60,6 @@ async def summarize_with_ollama(text: str) -> ArticleSummary:
     print(raw_summary)
     print("==========================\n")
 
-    # Step 2: Buat ArticleSummary langsung
     return ArticleSummary(
         judul="tidak tersedia",
         tanggal="tidak tersedia",

@@ -1,7 +1,10 @@
 fastapi
-uvicorn
-aiohttp
+uvicorn[standard]
+httpx
 python-dotenv
 pydantic
-crawl4ai
 jinja2
+beautifulsoup4
+crawl4ai
+nest_asyncio
+python-multipart
